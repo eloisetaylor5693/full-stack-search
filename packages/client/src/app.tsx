@@ -1,10 +1,18 @@
 import { useState, type ChangeEvent } from 'react';
-import { getCodeSandboxHost } from "@codesandbox/utils";
+import { getCodeSandboxHost } from '@codesandbox/utils';
 
-type Hotel = { _id: string, chain_name: string; hotel_name: string; city: string, country: string };
+type Hotel = {
+  _id: string;
+  chain_name: string;
+  hotel_name: string;
+  city: string;
+  country: string;
+};
 
-const codeSandboxHost = getCodeSandboxHost(3001)
-const API_URL = codeSandboxHost ? `https://${codeSandboxHost}` : 'http://localhost:3001'
+const codeSandboxHost = getCodeSandboxHost(3001);
+const API_URL = codeSandboxHost
+  ? `https://${codeSandboxHost}`
+  : 'http://localhost:3001';
 
 const fetchAndFilterHotels = async (value: string) => {
   const hotelsData = await fetch(`${API_URL}/hotels`);
@@ -14,9 +22,9 @@ const fetchAndFilterHotels = async (value: string) => {
       chain_name.toLowerCase().includes(value.toLowerCase()) ||
       hotel_name.toLowerCase().includes(value.toLowerCase()) ||
       city.toLowerCase().includes(value.toLowerCase()) ||
-      country.toLowerCase().includes(value.toLowerCase())
+      country.toLowerCase().includes(value.toLowerCase()),
   );
-}
+};
 
 function App() {
   const [hotels, setHotels] = useState<Hotel[]>([]);
@@ -29,7 +37,7 @@ function App() {
       return;
     }
 
-    const filteredHotels = await fetchAndFilterHotels(event.target.value)
+    const filteredHotels = await fetchAndFilterHotels(event.target.value);
     setShowClearBtn(true);
     setHotels(filteredHotels);
   };
@@ -57,15 +65,22 @@ function App() {
               {!!hotels.length && (
                 <div className="search-dropdown-menu dropdown-menu w-100 show p-2">
                   <h2>Hotels</h2>
-                  {hotels.length ? hotels.map((hotel, index) => (
-                    <li key={index}>
-                      <a href={`/hotels/${hotel._id}`} className="dropdown-item">
-                        <i className="fa fa-building mr-2"></i>
-                        {hotel.hotel_name}
-                      </a>
-                      <hr className="divider" />
-                    </li>
-                  )) : <p>No hotels matched</p>}
+                  {hotels.length ? (
+                    hotels.map((hotel, index) => (
+                      <li key={index}>
+                        <a
+                          href={`/hotels/${hotel._id}`}
+                          className="dropdown-item"
+                        >
+                          <i className="fa fa-building mr-2"></i>
+                          {hotel.hotel_name}
+                        </a>
+                        <hr className="divider" />
+                      </li>
+                    ))
+                  ) : (
+                    <p>No hotels matched</p>
+                  )}
                   <h2>Countries</h2>
                   <p>No countries matched</p>
                   <h2>Cities</h2>
