@@ -15,15 +15,8 @@ const API_URL = codeSandboxHost
   : 'http://localhost:3001';
 
 const fetchAndFilterHotels = async (value: string) => {
-  const hotelsData = await fetch(`${API_URL}/hotels`);
-  const hotels = (await hotelsData.json()) as Hotel[];
-  return hotels.filter(
-    ({ chain_name, hotel_name, city, country }) =>
-      chain_name.toLowerCase().includes(value.toLowerCase()) ||
-      hotel_name.toLowerCase().includes(value.toLowerCase()) ||
-      city.toLowerCase().includes(value.toLowerCase()) ||
-      country.toLowerCase().includes(value.toLowerCase()),
-  );
+  const hotelsData = await fetch(`${API_URL}/hotels?freetext-search=${value}`);
+  return (await hotelsData.json()) as Hotel[];
 };
 
 function App() {
