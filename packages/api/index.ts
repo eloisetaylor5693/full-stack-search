@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import { MongoClient } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { HotelSearchResponse } from 'interfaces/hotelSearchResponse';
 import { Hotel } from 'interfaces/hotel';
 import { City } from 'interfaces/city';
@@ -50,6 +50,25 @@ app.get('/hotels', async (req, res) => {
     };
 
     res.send(response);
+  } finally {
+    await mongoClient.close();
+  }
+});
+
+app.get('/hotel/:hotelId', async (req, res) => {
+  const { hotelId } = req?.params;
+  const mongoClient = await GetMongoClient();
+
+  try {
+    const db = mongoClient.db();
+
+    const hotelResults = db
+      .collection('hotels')
+      .findOne({ _id: new ObjectId(hotelId) });
+
+    res.send(await hotelResults);
+  } catch (error) {
+    console.error(error);
   } finally {
     await mongoClient.close();
   }
