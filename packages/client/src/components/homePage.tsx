@@ -108,7 +108,10 @@ function HomePage() {
                   {cities.length ? (
                     cities.map((city, index) => (
                       <li key={index}>
-                        <a href={`/city/${city._id}`} className="dropdown-item">
+                        <a
+                          href={`/cities/${city._id}`}
+                          className="dropdown-item"
+                        >
                           <i className="fa fa-map-marker mr-2"></i>
                           {city.name}
                         </a>

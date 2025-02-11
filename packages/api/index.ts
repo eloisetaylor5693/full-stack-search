@@ -62,11 +62,28 @@ app.get('/hotel/:hotelId', async (req, res) => {
   try {
     const db = mongoClient.db();
 
-    const hotelResults = db
+    const hotel = db
       .collection('hotels')
       .findOne({ _id: new ObjectId(hotelId) });
 
-    res.send(await hotelResults);
+    res.send(await hotel);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await mongoClient.close();
+  }
+});
+
+app.get('/city/:id', async (req, res) => {
+  const { id } = req?.params;
+  const mongoClient = await GetMongoClient();
+
+  try {
+    const db = mongoClient.db();
+
+    const city = db.collection('cities').findOne({ _id: new ObjectId(id) });
+
+    res.send(await city);
   } catch (error) {
     console.error(error);
   } finally {
