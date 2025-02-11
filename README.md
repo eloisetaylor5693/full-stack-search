@@ -92,6 +92,31 @@ For larger or more time-intensive changes, you're welcome to outline your ideas 
 
 _When all the behaviour is implemented, feel free to add some observations or conclusions you like to share in the section_
 
+I tried to explaine micro-descisions in the commit messages themselves.  You may find more detail there if you have a specific question that's not documented in this section.
+
+I extended /hotels API to return matching cities and countries as well as hotels. Depending on how the api is currently used it may be best to create a new endpoint. For the purposes of the tech test it seemed that I can assume the client is the only consumer of the API, and therefore can make a breaking change.
+
+I kept the implicit page naming conventions already defined in the homepage, and assumed this to be an seo requirement. The APIs were being created from scratch so decided to use singular instead of plural naming.
+
+Pages:
+
+- `/`
+- `/hotels/:id`
+- `/cities/:id`
+- `/countries/:id`
+
+API endpoints:
+
+- `/hotel/:id`
+- `/city/:id`
+- `/country/:id`
+
+Given more time I might implement the following:
+- Implement a repository pattern to wrap the mongodb data retrieval.  This would then remove all the mongodb logic from the express API
+- Deduplicate some of the logic: some patterns emerged about rendering search results for example
+- Explore more optimisations that could be made to the mongodb logic
+
+
 ### Database structure
 
 #### Hotels Collection
