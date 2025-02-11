@@ -4,6 +4,8 @@ import cors from 'cors';
 import { MongoClient } from 'mongodb';
 import { HotelSearchResponse } from 'interfaces/hotelSearchResponse';
 import { Hotel } from 'interfaces/hotel';
+import { City } from 'interfaces/city';
+import { Country } from 'interfaces/country';
 
 dotenv.config();
 
@@ -42,11 +44,20 @@ app.get('/hotels', async (req, res) => {
 
     const hotelResults = db.collection<Hotel>('hotels').find(hotelsQuery);
 
+    const cityResults = db
+      .collection<City>('cities')
+      .find({ name: { $regex: freetextSearchValue, $options: 'i' } });
+
+    const countryResults = db
+      .collection<Country>('countries')
+      .find({ country: { $regex: freetextSearchValue, $options: 'i' } });
+
     const response: HotelSearchResponse = {
       hotels: await hotelResults.toArray(),
-      cities: [],
-      countries: [],
+      cities: await cityResults.toArray(),
+      countries: await countryResults.toArray(),
     };
+
     res.send(response);
   } finally {
     await mongoClient.close();

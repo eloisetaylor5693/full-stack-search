@@ -1,5 +1,8 @@
+import { City } from './city';
+import { Country } from './country';
+
 export interface HotelSearchResponse {
   hotels: any[];
-  cities: string[];
-  countries: string[];
+  cities: City[];
+  countries: Country[];
 }

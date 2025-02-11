@@ -1,7 +1,9 @@
+import { City } from './city';
+import { Country } from './country';
 import { Hotel } from './hotel';
 
 export interface HotelSearchResponse {
   hotels: Hotel[];
-  cities: string[];
-  countries: string[];
+  cities: City[];
+  countries: Country[];
 }
