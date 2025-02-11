@@ -16,7 +16,8 @@ const DATABASE_URL = process.env.DATABASE_URL;
 
 async function GetMongoClient(): Promise<MongoClient> {
   if (!!mongoClient) {
-    return mongoClient.connect();
+    mongoClient.connect();
+    return mongoClient;
   }
 
   mongoClient = new MongoClient(DATABASE_URL);
