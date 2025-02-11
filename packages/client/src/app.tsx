@@ -1,23 +1,11 @@
 import { useState, type ChangeEvent } from 'react';
 import { getCodeSandboxHost } from '@codesandbox/utils';
-
-export type Hotel = {
-  _id: string;
-  chain_name: string;
-  hotel_name: string;
-  city: string;
-  country: string;
-};
+import { Hotel } from './interfaces/hotel';
 
 const codeSandboxHost = getCodeSandboxHost(3001);
 const API_URL = codeSandboxHost
   ? `https://${codeSandboxHost}`
   : 'http://localhost:3001';
-
-const fetchAndFilterHotels = async (value: string) => {
-  const hotelsData = await fetch(`${API_URL}/hotels?freetext-search=${value}`);
-  return (await hotelsData.json()) as Hotel[];
-};
 
 function App() {
   const [hotels, setHotels] = useState<Hotel[]>([]);
@@ -30,9 +18,13 @@ function App() {
       return;
     }
 
-    const filteredHotels = await fetchAndFilterHotels(event.target.value);
+    const searchResponse = await fetch(
+      `${API_URL}/hotels?freetext-search=${event.target.value}`,
+    );
+    const searchResults = await searchResponse.json();
+
     setShowClearBtn(true);
-    setHotels(filteredHotels);
+    setHotels(searchResults?.hotels);
   };
 
   return (

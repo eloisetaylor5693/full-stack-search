@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import App, { Hotel } from './app';
+import { HotelSearchResponse } from './interfaces/hotelSearchResponse';
 
 const fetchMocker = createFetchMock(vi);
 fetchMocker.enableMocks();
@@ -22,15 +23,19 @@ describe('Search page', () => {
     const searchTerm = 'marriot';
 
     describe('and there are maatching hotels', () => {
-      const mockHotelsResponse: Hotel[] = [
-        {
-          _id: '123',
-          chain_name: 'Marriott',
-          hotel_name: 'Sheraton Grand Hotel & Spa, Edinburgh',
-          city: 'Edinburgh',
-          country: 'United Kingdom',
-        },
-      ];
+      const mockHotelsResponse: HotelSearchResponse = {
+        cities: [],
+        countries: [],
+        hotels: [
+          {
+            _id: '123',
+            chain_name: 'Marriott',
+            hotel_name: 'Sheraton Grand Hotel & Spa, Edinburgh',
+            city: 'Edinburgh',
+            country: 'United Kingdom',
+          },
+        ],
+      };
 
       test('renders a hotel in the search results', async () => {
         fetchMock.mockResponseOnce(JSON.stringify(mockHotelsResponse));

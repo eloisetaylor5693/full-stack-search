@@ -2,6 +2,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { MongoClient } from 'mongodb';
+import { HotelSearchResponse } from 'interfaces/hotelSearchResponse';
+import { Hotel } from 'interfaces/hotel';
 
 dotenv.config();
 
@@ -29,7 +31,7 @@ app.get('/hotels', async (req, res) => {
     console.log('Successfully connected to MongoDB!');
     const db = mongoClient.db();
 
-    const query = {
+    const hotelsQuery = {
       $or: [
         { chain_name: { $regex: freetextSearchValue, $options: 'i' } },
         { hotel_name: { $regex: freetextSearchValue, $options: 'i' } },
@@ -38,8 +40,14 @@ app.get('/hotels', async (req, res) => {
       ],
     };
 
-    const collection = db.collection('hotels').find(query);
-    res.send(await collection.toArray());
+    const hotelResults = db.collection<Hotel>('hotels').find(hotelsQuery);
+
+    const response: HotelSearchResponse = {
+      hotels: await hotelResults.toArray(),
+      cities: [],
+      countries: [],
+    };
+    res.send(response);
   } finally {
     await mongoClient.close();
   }
