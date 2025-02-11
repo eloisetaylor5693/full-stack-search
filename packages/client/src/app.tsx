@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from 'react';
+import { useRef, useState, type ChangeEvent } from 'react';
 import { getCodeSandboxHost } from '@codesandbox/utils';
 import { Hotel } from './interfaces/hotel';
 import { City } from './interfaces/city';
@@ -10,11 +10,22 @@ const API_URL = codeSandboxHost
   : 'http://localhost:3001';
 
 function App() {
+  const searchBoxRef = useRef<HTMLInputElement>(null);
+
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
 
   const [showClearBtn, setShowClearBtn] = useState(false);
+
+  const clearSearchResults = () => {
+    //@ts-expect-error current is not null, and clear functionality works in the UI.  I can remove the HTMLInputElement typing but that doesn't include the value prop
+    searchBoxRef.current.value = '';
+
+    setHotels([]);
+    setCities([]);
+    setCountries([]);
+  };
 
   const fetchData = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === '') {
@@ -46,12 +57,13 @@ function App() {
                 <i className="fa fa-search"></i>
                 <input
                   type="text"
+                  ref={searchBoxRef}
                   className="form-control form-input"
                   placeholder="Search accommodation..."
                   onChange={fetchData}
                 />
                 {showClearBtn && (
-                  <span className="left-pan">
+                  <span className="left-pan" onClick={clearSearchResults}>
                     <i className="fa fa-close"></i>
                   </span>
                 )}
