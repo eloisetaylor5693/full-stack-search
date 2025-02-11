@@ -6,7 +6,7 @@ import { HotelSearchResponse } from 'interfaces/hotelSearchResponse';
 import { Hotel } from 'interfaces/hotel';
 import { City } from 'interfaces/city';
 import { Country } from 'interfaces/country';
-import GetMongoClient from 'utils/GetMongoDbClientSingleton';
+import { GetConnectedClientInstance } from 'utils/GetMongoDbClientSingleton';
 
 dotenv.config();
 
@@ -19,7 +19,11 @@ app.use(express.json());
 
 app.get('/hotels', async (req, res) => {
   const freetextSearchValue = req?.query?.['freetext-search'] as string;
-  const mongoClient = await GetMongoClient();
+  const mongoClient = await GetConnectedClientInstance();
+
+  if (!mongoClient) {
+    return res.status(500).send('Error connecting to MongoDB');
+  }
 
   try {
     const db = mongoClient.db();
@@ -50,6 +54,12 @@ app.get('/hotels', async (req, res) => {
     };
 
     res.send(response);
+  } catch (error) {
+    console.error(error);
+
+    return res
+      .status(500)
+      .send('Something went wrong.  ' + (error as Error)?.message);
   } finally {
     await mongoClient.close();
   }
@@ -57,7 +67,11 @@ app.get('/hotels', async (req, res) => {
 
 app.get('/hotel/:hotelId', async (req, res) => {
   const { hotelId } = req?.params;
-  const mongoClient = await GetMongoClient();
+  const mongoClient = await GetConnectedClientInstance();
+
+  if (!mongoClient) {
+    return res.status(500).send('Error connecting to MongoDB');
+  }
 
   try {
     const db = mongoClient.db();
@@ -69,6 +83,10 @@ app.get('/hotel/:hotelId', async (req, res) => {
     res.send(await hotel);
   } catch (error) {
     console.error(error);
+
+    return res
+      .status(500)
+      .send('Something went wrong.  ' + (error as Error)?.message);
   } finally {
     await mongoClient.close();
   }
@@ -76,7 +94,11 @@ app.get('/hotel/:hotelId', async (req, res) => {
 
 app.get('/city/:id', async (req, res) => {
   const { id } = req?.params;
-  const mongoClient = await GetMongoClient();
+  const mongoClient = await GetConnectedClientInstance();
+
+  if (!mongoClient) {
+    return res.status(500).send('Error connecting to MongoDB');
+  }
 
   try {
     const db = mongoClient.db();
@@ -86,6 +108,10 @@ app.get('/city/:id', async (req, res) => {
     res.send(await city);
   } catch (error) {
     console.error(error);
+
+    return res
+      .status(500)
+      .send('Something went wrong.  ' + (error as Error)?.message);
   } finally {
     await mongoClient.close();
   }
@@ -93,16 +119,26 @@ app.get('/city/:id', async (req, res) => {
 
 app.get('/country/:id', async (req, res) => {
   const { id } = req?.params;
-  const mongoClient = await GetMongoClient();
+  const mongoClient = await GetConnectedClientInstance();
+
+  if (!mongoClient) {
+    return res.status(500).send('Error connecting to MongoDB');
+  }
 
   try {
     const db = mongoClient.db();
 
-    const country = db.collection('countries').findOne({ _id: new ObjectId(id) });
+    const country = db
+      .collection('countries')
+      .findOne({ _id: new ObjectId(id) });
 
     res.send(await country);
   } catch (error) {
     console.error(error);
+
+    return res
+      .status(500)
+      .send('Something went wrong.  ' + (error as Error)?.message);
   } finally {
     await mongoClient.close();
   }

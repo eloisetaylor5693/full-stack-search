@@ -16,17 +16,32 @@ const DATABASE_URL = process.env.DATABASE_URL;
 
 async function GetMongoClient(): Promise<MongoClient> {
   if (!!mongoClient) {
-    mongoClient.connect();
     return mongoClient;
   }
 
+  console.log('Creating new MongoClient...');
   mongoClient = new MongoClient(DATABASE_URL);
-  console.log('Connecting to MongoDB...');
-
-  await mongoClient.connect();
-  console.log('Successfully connected to MongoDB!');
+  console.log('Successfully created new MongoClient');
 
   return mongoClient;
 }
 
-export default GetMongoClient;
+async function GetConnectedClientInstance(): Promise<MongoClient | undefined> {
+  let connectedClient: MongoClient = await GetMongoClient();
+
+  try {
+    await GetMongoClient();
+
+    console.log('Connecting to MongoDB...');
+    connectedClient = await mongoClient!.connect();
+    console.log('Successfully connected to MongoDB!');
+
+    return connectedClient;
+  } catch (error) {
+    console.error(error);
+
+    throw new Error('Error connecting to MongoDB');
+  }
+}
+
+export { GetConnectedClientInstance };
