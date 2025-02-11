@@ -1,6 +1,8 @@
 import { useState, type ChangeEvent } from 'react';
 import { getCodeSandboxHost } from '@codesandbox/utils';
 import { Hotel } from './interfaces/hotel';
+import { City } from './interfaces/city';
+import { Country } from './interfaces/country';
 
 const codeSandboxHost = getCodeSandboxHost(3001);
 const API_URL = codeSandboxHost
@@ -9,11 +11,16 @@ const API_URL = codeSandboxHost
 
 function App() {
   const [hotels, setHotels] = useState<Hotel[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
+  const [countries, setCountries] = useState<Country[]>([]);
+
   const [showClearBtn, setShowClearBtn] = useState(false);
 
   const fetchData = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === '') {
       setHotels([]);
+      setCities([]);
+      setCountries([]);
       setShowClearBtn(false);
       return;
     }
@@ -25,6 +32,8 @@ function App() {
 
     setShowClearBtn(true);
     setHotels(searchResults?.hotels);
+    setCities(searchResults?.cities);
+    setCountries(searchResults?.countries);
   };
 
   return (
@@ -47,7 +56,10 @@ function App() {
                   </span>
                 )}
               </div>
-              {!!hotels.length && (
+
+              {(!!hotels?.length ||
+                !!cities?.length ||
+                !!countries?.length) && (
                 <div className="search-dropdown-menu dropdown-menu w-100 show p-2">
                   <h2>Hotels</h2>
                   {hotels.length ? (
@@ -66,10 +78,39 @@ function App() {
                   ) : (
                     <p>No hotels matched</p>
                   )}
+
                   <h2>Countries</h2>
-                  <p>No countries matched</p>
+                  {countries.length ? (
+                    countries.map((country, index) => (
+                      <li key={index}>
+                        <a
+                          href={`/country/${country._id}`}
+                          className="dropdown-item"
+                        >
+                          <i className="fa fa-globe mr-2"></i>
+                          {country.country}
+                        </a>
+                        <hr className="divider" />
+                      </li>
+                    ))
+                  ) : (
+                    <p>No countries matched</p>
+                  )}
+
                   <h2>Cities</h2>
-                  <p>No cities matched</p>
+                  {cities.length ? (
+                    cities.map((city, index) => (
+                      <li key={index}>
+                        <a href={`/city/${city._id}`} className="dropdown-item">
+                          <i className="fa fa-map-marker mr-2"></i>
+                          {city.name}
+                        </a>
+                        <hr className="divider" />
+                      </li>
+                    ))
+                  ) : (
+                    <p>No cities matched</p>
+                  )}
                 </div>
               )}
             </div>
