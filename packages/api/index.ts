@@ -91,6 +91,23 @@ app.get('/city/:id', async (req, res) => {
   }
 });
 
+app.get('/country/:id', async (req, res) => {
+  const { id } = req?.params;
+  const mongoClient = await GetMongoClient();
+
+  try {
+    const db = mongoClient.db();
+
+    const country = db.collection('countries').findOne({ _id: new ObjectId(id) });
+
+    res.send(await country);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await mongoClient.close();
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`API Server Started at ${PORT}`);
 });

@@ -91,7 +91,7 @@ function HomePage() {
                     countries.map((country, index) => (
                       <li key={index}>
                         <a
-                          href={`/country/${country._id}`}
+                          href={`/countries/${country._id}`}
                           className="dropdown-item"
                         >
                           <i className="fa fa-globe mr-2"></i>
