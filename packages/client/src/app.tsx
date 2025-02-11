@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent } from 'react';
 import { getCodeSandboxHost } from '@codesandbox/utils';
 
-type Hotel = {
+export type Hotel = {
   _id: string;
   chain_name: string;
   hotel_name: string;
